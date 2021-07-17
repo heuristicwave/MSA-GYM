@@ -1,12 +1,33 @@
 import { NestFactory } from '@nestjs/core';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api');
-  app.enableCors({
-    origin: 'http://localhost:4200',
+  // const app = await NestFactory.create(AppModule);
+  // app.setGlobalPrefix('api');
+  // app.enableCors({
+  //   origin: 'http://localhost:4200',
+  // });
+  // await app.listen(8001);
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+    transport: Transport.RMQ,
+    options: {
+      // urls: ['amqp://guest:guest@localhost:30000'],
+      urls: [process.env.RABBITMQ_URL],
+      queue: 'main_queue',
+      queueOptions: {
+        durable: false
+      },
+    },
   });
-  await app.listen(8001);
+
+  // app.listen(() => {
+  //   console.log('Microservice is listening.')
+  // });
+
+  // Disconnected from RMQ
+  const handleListening = () =>
+    console.log('🙆 Microservice is listening.');
+  app.listen().then(handleListening);
 }
 bootstrap();
