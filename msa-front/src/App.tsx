@@ -4,6 +4,7 @@ import "./App.css";
 import Menu from "./components/Menu";
 import Nav from "./components/Nav";
 import Products from "./admin/Products";
+import { BrowserRouter, Route } from "react-router-dom";
 
 function App() {
   return (
@@ -13,7 +14,9 @@ function App() {
         <div className="row">
           <Menu />
           <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <Products />
+            <BrowserRouter>
+              <Route path="/admin/products" component={Products} />
+            </BrowserRouter>
           </main>
         </div>
       </div>
